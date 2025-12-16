@@ -12,7 +12,7 @@
             --text: #ffffff;
         }
         body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; }
-
+        
         header { width: 100%; padding: 20px; background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 99; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
         .search { padding: 10px; border-radius: 20px; border: none; width: 300px; }
@@ -31,7 +31,7 @@
         /* MODAL */
         .modal-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal { background: #151515; width: 90%; max-width: 600px; border-radius: 10px; padding: 20px; border: 1px solid var(--primary); box-shadow: 0 0 50px rgba(102, 252, 241, 0.2); }
-
+        
         .store-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 15px; margin-bottom: 10px; border-radius: 5px; text-decoration: none; color: white; transition: 0.2s; }
         .store-row:hover { background: #333; transform: scale(1.02); }
         .badge { background: var(--primary); color: black; font-weight: bold; font-size: 11px; padding: 2px 6px; border-radius: 3px; margin-left: 10px; }
@@ -63,11 +63,12 @@
 
         async function yukle() {
             try {
+                // Veriyi çek
                 const res = await fetch('oyunlar.json');
                 oyunlarDB = await res.json();
                 ciz(oyunlarDB);
             } catch(e) {
-                document.getElementById('grid').innerHTML = "<h3 style='color:red'>Veri yok. Python botunu çalıştırın.</h3>";
+                document.getElementById('grid').innerHTML = "<h3 style='color:red'>Veri yok. Lütfen oyunlar.json dosyasını yükleyin.</h3>";
             }
         }
 
@@ -75,14 +76,11 @@
             const grid = document.getElementById('grid');
             grid.innerHTML = "";
             liste.forEach(oyun => {
-                let img = oyun.resim;
-                if(img.includes("steamcdn")) img = img.replace("capsule_sm_120", "header");
-
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.onclick = () => detayAc(oyun);
                 div.innerHTML = `
-                    <img src="${img}" onerror="this.src='${oyun.resim}'">
+                    <img src="${oyun.resim}" alt="${oyun.isim}">
                     <div class="info">
                         <div class="title">${oyun.isim}</div>
                         <span class="price">${oyun.en_ucuz} TL</span>
@@ -103,7 +101,7 @@
                 a.className = 'store-row';
                 a.href = magaza.link;
                 a.target = "_blank"; 
-
+                
                 let etiket = "";
                 if(index === 0) etiket = "<span class='badge'>EN İYİ FİYAT</span>";
 
