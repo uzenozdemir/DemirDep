@@ -3,129 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OyunBulucu - Global</title>
+    <title>OyunBulucu - En İyi Fiyatlar</title>
     <style>
         :root {
-            --bg: #0b0c10;
-            --card-bg: #1f2833;
-            --primary: #66fcf1;
-            --text: #ffffff;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent: #00bcd4;
+            --text-color: #ffffff;
         }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; }
-        
-        header { width: 100%; padding: 20px; background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 99; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
-        .search { padding: 10px; border-radius: 20px; border: none; width: 300px; }
 
-        .container { max-width: 1200px; width: 100%; padding: 40px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        .card { background: var(--card-bg); border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid transparent; }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 0 15px rgba(102, 252, 241, 0.3); }
-        .card img { width: 100%; height: 140px; object-fit: cover; }
-        .info { padding: 15px; }
-        .title { font-weight: bold; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .price { font-size: 20px; font-weight: bold; color: var(--primary); }
-        .count-badge { font-size: 12px; color: #aaa; float: right; margin-top: 5px; }
+        /* Header */
+        header {
+            background-color: #000;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+        }
 
-        /* MODAL */
-        .modal-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal { background: #151515; width: 90%; max-width: 600px; border-radius: 10px; padding: 20px; border: 1px solid var(--primary); box-shadow: 0 0 50px rgba(102, 252, 241, 0.2); }
-        
-        .store-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 15px; margin-bottom: 10px; border-radius: 5px; text-decoration: none; color: white; transition: 0.2s; }
-        .store-row:hover { background: #333; transform: scale(1.02); }
-        .badge { background: var(--primary); color: black; font-weight: bold; font-size: 11px; padding: 2px 6px; border-radius: 3px; margin-left: 10px; }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .search-container {
+            width: 300px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* Grid Layout - Her satırda 5 oyun */
+        .container {
+            padding: 40px;
+            flex: 1;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 Sütun Kuralı */
+            gap: 20px;
+        }
+
+        /* Mobil uyumluluk için sütun sayısını düşürür */
+        @media (max-width: 1200px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 900px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .game-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* Kart Tasarımı */
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background-color: #333; /* Resim yüklenmezse gri görünür */
+        }
+
+        .card-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .game-title {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .store-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* Sayfalama (Pagination) */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .page-btn {
+            background-color: var(--card-bg);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .page-btn.active {
+            background-color: var(--accent);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">OyunBulucu</div>
-        <input type="text" class="search" id="search" placeholder="Oyun ara...">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Oyun ara... (örn: gta5, rdr2)">
+        </div>
     </header>
 
     <div class="container">
-        <p style="text-align: right; color: #888;">Fiyatlar güncel kur ile TL'ye çevrilmiştir.</p>
-        <div id="grid" class="grid"></div>
+        <div class="game-grid" id="gameGrid">
+            </div>
+
+        <div class="pagination" id="pagination">
+            </div>
     </div>
 
-    <div id="modal" class="modal-bg" onclick="kapat(event)">
-        <div class="modal">
-            <h2 id="m-title" style="margin-top:0">Oyun Adı</h2>
-            <p style="color:#888; font-size:14px; margin-bottom:20px;">Bulunan Mağaza Fiyatları (En Ucuzdan Pahalıya)</p>
-            <div id="m-list"></div>
-            <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:20px; padding:10px 20px; background:#333; color:white; border:none; cursor:pointer; width:100%;">Kapat</button>
-        </div>
-    </div>
+    <footer>
+        Gizlilik esastır. © 2024 OyunBulucu. Tüm hakları saklıdır.
+    </footer>
 
     <script>
-        let oyunlarDB = [];
+        // --- MOCK DATA (BOT HENÜZ OLMADIĞI İÇİN ÖRNEK VERİLER) ---
+        // Not: Gerçekte bu veriyi Python botumuzun oluşturduğu bir JSON dosyasından çekeceğiz.
+        // "keywords" kısmı akıllı arama için hayati önem taşır.
+        const allGames = [
+            { title: "Grand Theft Auto V", price: "500 TL", image: "https://placehold.co/600x400?text=GTA+V", store: "Steam", keywords: ["gta5", "gta 5", "grand theft auto 5"] },
+            { title: "Cyberpunk 2077", price: "999 TL", image: "https://placehold.co/600x400?text=Cyberpunk", store: "Epic Games", keywords: ["cp77", "cyberpunk"] },
+            { title: "Elden Ring", price: "1100 TL", image: "https://placehold.co/600x400?text=Elden+Ring", store: "Steam", keywords: ["elden", "ring"] },
+            { title: "Red Dead Redemption 2", price: "379 TL", image: "https://placehold.co/600x400?text=RDR2", store: "Epic Games", keywords: ["rdr2", "red dead 2"] },
+            { title: "Stardew Valley", price: "24 TL", image: "https://placehold.co/600x400?text=Stardew", store: "Xbox", keywords: ["stardew"] },
+            { title: "God of War", price: "899 TL", image: "https://placehold.co/600x400?text=God+of+War", store: "Steam", keywords: ["gow", "kratos"] },
+            // ... 200 oyuna tamamlamak için veriyi çoğaltıyorum (Simülasyon)
+        ];
 
-        async function yukle() {
-            try {
-                // Veriyi çek
-                const res = await fetch('oyunlar.json');
-                oyunlarDB = await res.json();
-                ciz(oyunlarDB);
-            } catch(e) {
-                document.getElementById('grid').innerHTML = "<h3 style='color:red'>Veri yok. Lütfen oyunlar.json dosyasını yükleyin.</h3>";
-            }
+        // Veriyi çoğaltarak 200 oyunluk test ortamı oluşturuyorum
+        for(let i=0; i<30; i++) {
+            allGames.push(...allGames.slice(0, 6)); 
         }
 
-        function ciz(liste) {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = "";
-            liste.forEach(oyun => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.onclick = () => detayAc(oyun);
-                div.innerHTML = `
-                    <img src="${oyun.resim}" alt="${oyun.isim}">
-                    <div class="info">
-                        <div class="title">${oyun.isim}</div>
-                        <span class="price">${oyun.en_ucuz} TL</span>
-                        <span class="count-badge">${oyun.magazalar.length} Mağaza</span>
+        // --- AYARLAR ---
+        const itemsPerPage = 25; // Her satırda 5 tane, 5 satır olsun (5x5 = 25 oyun)
+        let currentPage = 1;
+        let currentData = allGames; // Şu an gösterilen filtrelenmiş liste
+
+        const gridElement = document.getElementById('gameGrid');
+        const paginationElement = document.getElementById('pagination');
+        const searchInput = document.getElementById('searchInput');
+
+        // --- FONKSİYONLAR ---
+
+        function renderGames(page) {
+            gridElement.innerHTML = "";
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedItems = currentData.slice(start, end);
+
+            if(paginatedItems.length === 0) {
+                gridElement.innerHTML = "<p style='grid-column: span 5; text-align:center;'>Oyun bulunamadı.</p>";
+                return;
+            }
+
+            paginatedItems.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <img src="${game.image}" alt="${game.title}" class="game-image">
+                    <div class="card-content">
+                        <h3 class="game-title" title="${game.title}">${game.title}</h3>
+                        <div class="game-price">${game.price}</div>
+                        <div class="store-info">${game.store}</div>
                     </div>
                 `;
-                grid.appendChild(div);
+                gridElement.appendChild(card);
             });
         }
 
-        function detayAc(oyun) {
-            document.getElementById('m-title').innerText = oyun.isim;
-            const list = document.getElementById('m-list');
-            list.innerHTML = "";
+        function renderPagination() {
+            paginationElement.innerHTML = "";
+            const pageCount = Math.ceil(currentData.length / itemsPerPage);
+            
+            // Önceki Sayfa
+            const prevBtn = document.createElement('button');
+            prevBtn.innerText = "<";
+            prevBtn.className = "page-btn";
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => { currentPage--; updateView(); };
+            paginationElement.appendChild(prevBtn);
 
-            oyun.magazalar.forEach((magaza, index) => {
-                const a = document.createElement('a');
-                a.className = 'store-row';
-                a.href = magaza.link;
-                a.target = "_blank"; 
+            // Sayfa Numaraları (Basit versiyon)
+            // Çok fazla sayfa olursa buraya "..." mantığı eklenebilir.
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(pageCount, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.innerText = i;
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.onclick = () => { currentPage = i; updateView(); };
+                paginationElement.appendChild(btn);
+            }
+
+            // Sonraki Sayfa
+            const nextBtn = document.createElement('button');
+            nextBtn.innerText = ">";
+            nextBtn.className = "page-btn";
+            nextBtn.disabled = currentPage === pageCount;
+            nextBtn.onclick = () => { currentPage++; updateView(); };
+            paginationElement.appendChild(nextBtn);
+        }
+
+        function updateView() {
+            renderGames(currentPage);
+            renderPagination();
+        }
+
+        // --- AKILLI ARAMA MANTIĞI ---
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            
+            currentData = allGames.filter(game => {
+                // Oyun başlığını kontrol et
+                const titleMatch = game.title.toLowerCase().includes(query);
+                // "keywords" listesini kontrol et (gta5 -> GTA V eşleşmesi burada oluyor)
+                const keywordMatch = game.keywords && game.keywords.some(k => k.includes(query));
                 
-                let etiket = "";
-                if(index === 0) etiket = "<span class='badge'>EN İYİ FİYAT</span>";
-
-                a.innerHTML = `
-                    <span>${magaza.magaza} ${etiket}</span>
-                    <span style="font-weight:bold; color:var(--primary)">${magaza.fiyat_tl} TL</span>
-                `;
-                list.appendChild(a);
+                return titleMatch || keywordMatch;
             });
 
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        function kapat(e) {
-            if(e.target.id === 'modal') document.getElementById('modal').style.display = 'none';
-        }
-
-        document.getElementById('search').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtre = oyunlarDB.filter(o => o.isim.toLowerCase().includes(val));
-            ciz(filtre);
+            currentPage = 1; // Aramada ilk sayfaya dön
+            updateView();
         });
 
-        yukle();
+        // Başlangıç
+        updateView();
+
     </script>
 </body>
 </html>
